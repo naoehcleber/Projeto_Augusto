@@ -8,9 +8,9 @@ struct caso
     int idade;
     //avaliacao de 0 a 10
     int avaliacao;
-    //s ou n
-    char recomendacao;
-    char comentario[200];
+    //M ou F
+    char genero;
+    
     int contador;
 
-};
+} c;
