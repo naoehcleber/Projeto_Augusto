@@ -61,7 +61,6 @@ void NovoRegistro(){
     fclose(arquivo);
 
 }
-#include <stdio.h>
 
 #define PERSON_FORMAT_OUT "(%s, %d, %d, %c)\n"
 
