@@ -1,14 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "structs.h"
 #include "funcoes.h"
 
-const char* PERSON_FORMAT_OUT = "(%s, %d, %d, %c)\n";
+//const char* PERSON_FORMAT_OUT = "(%s, %d, %d, %c)\n";
 
 void main(){
-    struct caso c;
+    //struct caso c;
 
-    FILE *arquivo = fopen("dados.txt", "w+");
+    FILE *arquivo = fopen("dados.txt", "r+");
 
     while(1){
         int escolha;
@@ -22,23 +21,23 @@ void main(){
         switch (escolha){
         case 1:
             NovoRegistro();
-            fprintf(arquivo, PERSON_FORMAT_OUT, c.nome, c.idade, c.avaliacao, c.genero);
-            fseek(arquivo, 0, SEEK_SET);
+            
 
             break;
         case 2:
-            /* code */
+            ListarRegistros();
             break;
         case 3:
-            /* code */
+            //BuscarRegistro();
             break;
         case 4:
-            /* code */
+            //AtualizarRegistro();
             break;
         case 5:
-            /* code */
+            //RemoverRegistro();
             break;
         case 0:
+            exit(0);
             break;
         }
     }
