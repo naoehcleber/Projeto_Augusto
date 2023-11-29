@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "structs.h"
 //define o formato em que os dados vao ser escritos 
 const char* PERSON_FORMAT_OUT = "(%s, %d, %d, %c)\n";
@@ -18,6 +19,8 @@ void ImprimirMenu(){
 
 
 
+
+
 void NovoRegistro(){
     FILE *arquivo = fopen("dados.txt","r+");
     if(arquivo == NULL){
@@ -28,6 +31,9 @@ void NovoRegistro(){
 
     printf("Nome : ");
     fgets(c.nome,50,stdin);
+    //remover o '\n' do fgets
+    c.nome[strcspn(c.nome,"\n")] = '\0';
+
     printf("Idade : ");
     scanf("%d",&c.idade);
     printf("Digite uma nota de 0 a 10 : ");
@@ -62,7 +68,42 @@ void NovoRegistro(){
 
 }
 
-#define PERSON_FORMAT_OUT "(%s, %d, %d, %c)\n"
+
+
+
+
+
+int ContarLinhasNoArquivo(){
+    FILE *arquivo = fopen("dados.txt","r");
+    char K;
+    int linhas = 0;
+
+    for(K = getc(arquivo); K !=EOF; K = getc(arquivo)){
+        if( K == '\n'){
+            linhas = linhas + 1;
+        }
+    }
+
+    return linhas;
+}
+
+void AdicionarContador(){
+    FILE *arquivo = fopen("dados.txt","r+");
+    FILE *arquivoTEMP = fopen("dadosTEMP.txt", "w+");
+    
+    int current_line = 1;
+    int linhas = ContarLinhasNoArquivo();
+    char buffer[linhas];
+    while(fgets(buffer,sizeof(buffer),arquivo) != NULL){
+        fprintf(arquivoTEMP, "%d - %s\n", current_line, buffer);
+        current_line++;
+    }
+    fclose(arquivoTEMP);
+    fclose(arquivo);
+
+    remove("dados.txt");
+    rename("dadosTEMP.txt", "dados.txt");
+}
 
 void ListarRegistros() {
     FILE *arquivo = fopen("dados.txt", "r");
@@ -72,34 +113,39 @@ void ListarRegistros() {
     }
 
     int qual;
-    char impressaoNOME[20];
-    int impressaoIDADE, impressaoAVALIACAO;
-    char impressaoGENERO;
+    int K;
+    int linhas;
 
     printf("1- Ler os 5 primeiros registros\n");
-    printf("2- Ler os 5 últimos registros\n");
+    printf("2- Ler os 5 ultimos registros\n");
     printf("3- Ler TODOS os registros\n");
     scanf("%d", &qual);
 
     switch (qual) {
         case 1:
-            // Code to read and print the first 5 records
-            for (int i = 0; i < 5 && fscanf(arquivo, PERSON_FORMAT_OUT, impressaoNOME, &impressaoIDADE, &impressaoAVALIACAO, &impressaoGENERO) != EOF; i++) {
-                printf(PERSON_FORMAT_OUT, impressaoNOME, impressaoIDADE, impressaoAVALIACAO, impressaoGENERO);
+            
+            for(int i = 0; i< 5; i++){
+                while((K = getc(arquivo)) != EOF){
+                    putchar(K);
+                }
             }
             break;
 
         case 2:
-            // Code to read and print the last 5 records
-            // You need to determine the total number of records in the file and then read the last 5.
-            // Implementing this requires additional code to count the total number of records.
-            // Please note that this is a simplified example, and a more robust solution may be needed.
+            //ta imprimindo todos os records ao inves de os 5 ultimos apenas
+            linhas = ContarLinhasNoArquivo();
+            for(int i = linhas; i> linhas-5; i--){
+                while((K = getc(arquivo)) != EOF){
+                    putchar(K);
+                }
+            }
             break;
 
         case 3:
-            // Code to read and print all records
-            while (fscanf(arquivo, PERSON_FORMAT_OUT, impressaoNOME, &impressaoIDADE, &impressaoAVALIACAO, &impressaoGENERO) != EOF) {
-                printf(PERSON_FORMAT_OUT, impressaoNOME, impressaoIDADE, impressaoAVALIACAO, impressaoGENERO);
+            
+            while((K = getc(arquivo)) != EOF){
+                putchar(K);
+                
             }
             break;
 
@@ -109,7 +155,7 @@ void ListarRegistros() {
     }
 
     fclose(arquivo);
-}
 
+}
 
 

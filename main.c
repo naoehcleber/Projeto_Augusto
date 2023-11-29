@@ -21,10 +21,9 @@ void main(){
         switch (escolha){
         case 1:
             NovoRegistro();
-            
-
             break;
         case 2:
+            AdicionarContador();
             ListarRegistros();
             break;
         case 3:
