@@ -4,7 +4,8 @@
 #include <stdbool.h>
 #include "structs.h"
 //define o formato em que os dados vao ser escritos 
-const char* PERSON_FORMAT_OUT = "(%s, %d, %d, %c)\n";
+const char* PERSON_FORMAT_OUT = "%d - (%s, %d, %d, %c)\n";
+int i = 0;
 
 void ImprimirMenu(){
     printf("1 - Adicionar novo registro\n");
@@ -18,58 +19,6 @@ void ImprimirMenu(){
 
 
 
-
-
-
-
-void NovoRegistro(){
-    FILE *arquivo = fopen("dados.txt","r+");
-    if(arquivo == NULL){
-        arquivo = fopen("dados.txt","w+");
-    }
-
-
-
-    printf("Nome : ");
-    fgets(c.nome,50,stdin);
-    //remover o '\n' do fgets
-    c.nome[strcspn(c.nome,"\n")] = '\0';
-
-    printf("Idade : ");
-    scanf("%d",&c.idade);
-    printf("Digite uma nota de 0 a 10 : ");
-    scanf("%d", &c.avaliacao);
-    while(getchar()!='\n');
-
-    printf("Qual genero ? ");
-    scanf("%c",&c.genero);
-    
-
-    int posicao;
-    printf("Deseja inserir o registro no inicio ou no final do arquivo ?\n");
-    printf("1 - inicio\n");
-    printf("2 - final\n");
-    scanf("%d",&posicao);
-
-    switch(posicao){
-        case 1 :
-            fseek(arquivo, 0, SEEK_SET);
-            //imprimir no arquivo ja formatado 
-            fprintf(arquivo, PERSON_FORMAT_OUT, c.nome, c.idade, c.avaliacao, c.genero);
-
-            break;
-        case 2 :
-            fseek(arquivo, 0, SEEK_END);
-            //imprimir no arquivo ja formatado 
-            fprintf(arquivo, PERSON_FORMAT_OUT, c.nome, c.idade, c.avaliacao, c.genero);
-
-            break;
-    }
-    fclose(arquivo);
-
-}
-
-
 int ContarLinhasNoArquivo(){
     FILE *arquivo = fopen("dados.txt","r");
     char K;
@@ -80,28 +29,82 @@ int ContarLinhasNoArquivo(){
             linhas = linhas + 1;
         }
     }
-
+    
     return linhas;
 }
 
-void AdicionarContador(){
-    FILE *arquivo = fopen("dados.txt","r+");
-    FILE *arquivoTEMP = fopen("dadosTEMP.txt", "w+");
-    
-    int current_line = 1;
+int IncrementarContador(){
     int linhas = ContarLinhasNoArquivo();
-    char buffer[linhas];
-    while(fgets(buffer,sizeof(buffer),arquivo) != NULL){
-        fprintf(arquivoTEMP, "%d - (%s)", current_line, buffer);
-        c.contador = current_line;
-        current_line++;
-    }
-    fclose(arquivoTEMP);
-    fclose(arquivo);
-
-    remove("dados.txt");
-    rename("dadosTEMP.txt", "dados.txt");
+    int contador = linhas +1;
+    return contador;
 }
+
+
+
+void NovoRegistro(){
+    FILE *arquivo = fopen("dados.txt","r+");
+    if(arquivo == NULL){
+        arquivo = fopen("dados.txt","w+");
+    }
+
+    int linhas = ContarLinhasNoArquivo();
+    int j = linhas;
+    
+        printf("Caso %d\n", j+1);
+        printf("Nome : ");
+        fgets(c[i].nome,50,stdin);
+        //remover o '\n' do fgets
+        c[i].nome[strcspn(c[i].nome,"\n")] = '\0';
+
+        printf("Idade : ");
+        scanf("%d",&c[i].idade);
+        printf("Digite uma nota de 0 a 10 para Joao : ");
+        scanf("%d", &c[i].avaliacao);
+        while(getchar()!='\n');
+
+        printf("Qual genero ? ");
+        scanf("%c",&c[i].genero);
+        
+
+        int posicao;
+        printf("Deseja inserir o registro no inicio ou no final do arquivo ?\n");
+        printf("1 - inicio\n");
+        printf("2 - final\n");
+        scanf("%d",&posicao);
+
+        switch(posicao){
+            case 1 :
+                // fseek(arquivo, 0, SEEK_SET);
+                // //imprimir no arquivo ja formatado 
+                // fprintf(arquivo, PERSON_FORMAT_OUT, c[i].nome, c[i].idade, c[i].avaliacao, c[i].genero);
+                // int linhas = ContarLinhasNoArquivo;
+                // int i, j, atual;
+                // for(i=1; i<linhas; i++){
+                //     atual = c[i];
+                //     j = i-1;
+                //     while(j>=0 && c[j]>atual){
+                //         c[j+1] = c[j];
+                //         j = j-1;
+                //     }
+                //     c[j+1] = atual;
+                // }
+                    
+                // }
+
+                break;
+            case 2 :
+                fseek(arquivo, 0, SEEK_END);
+                //imprimir no arquivo ja formatado
+                linhas = c[i].contador; 
+                fprintf(arquivo, PERSON_FORMAT_OUT, c[j].contador, c[i].nome, c[i].idade, c[i].avaliacao, c[i].genero);
+
+                break;
+        }
+        fclose(arquivo);
+        i++;
+    }
+
+
 
 void ListarRegistros() {
     FILE *arquivo = fopen("dados.txt", "r");
@@ -165,9 +168,9 @@ void BuscarRegistro(){
     scanf("%d", &numRegistro);
 
     while(fread(&c, sizeof(c), 1, arquivo) == 1){
-        if(c.contador == numRegistro){
+        if(c[i].contador == numRegistro){
             encontrado = 1;
-            printf("(%s, %d, %d, %c, %d)\n", c.nome, c.idade, c.avaliacao, c.genero, c.contador);
+            printf("(%s, %d, %d, %c, %d)\n", c[i].nome, c[i].idade, c[i].avaliacao, c[i].genero, c[i].contador);
             break;
         }
     }
