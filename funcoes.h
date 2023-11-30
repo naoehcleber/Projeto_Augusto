@@ -4,7 +4,6 @@
 #include <stdbool.h>
 #include "structs.h"
 
-//define o formato em que os dados vao ser escritos 
 const char* PERSON_FORMAT_OUT = "%d - (%s, %d, %d, %c)\n";
 int i = 0;
 
@@ -15,11 +14,10 @@ void ImprimirMenu(){
     printf("4 - Atualizar um caso\n");
     printf("5 - Remover um caso\n");
     printf("0 - Fechar aplicacao\n");
-
 }
 
 int ContarLinhasNoArquivo(){
-    FILE *arquivo = fopen("dados.txt","r");
+    FILE *arquivo = fopen("Caso.txt","r");
     char K;
     int linhas = 0;
 
@@ -39,9 +37,9 @@ int IncrementarContador(){
 }
 
 void NovoRegistro(){
-    FILE *arquivo = fopen("dados.txt","r+");
+    FILE *arquivo = fopen("Caso.txt","r+");
     if(arquivo == NULL){
-        arquivo = fopen("dados.txt","w+");
+        arquivo = fopen("Caso.txt","w+");
     }
 
     int linhas = ContarLinhasNoArquivo();
@@ -87,10 +85,10 @@ void NovoRegistro(){
                 fclose(arquivo);
                 fclose(temp);
 
-                remove("dados.txt");
-                rename("temp.txt", "dados.txt");
+                remove("Caso.txt");
+                rename("temp.txt", "Caso.txt");
 
-                arquivo = fopen("dados.txt", "r+");
+                arquivo = fopen("Caso.txt", "r+");
                 break;
 
             case 2 :
@@ -108,7 +106,7 @@ void NovoRegistro(){
 
 
 void ListarRegistros() {
-    FILE *arquivo = fopen("dados.txt", "r");
+    FILE *arquivo = fopen("Caso.txt", "r");
     if (arquivo == NULL) {
         printf("\nNao foi possivel abrir o arquivo para leitura.\n");
         return;
@@ -116,7 +114,6 @@ void ListarRegistros() {
 
     int qual;
     int K;
-    int linhas = ContarLinhasNoArquivo();
     int linhaAtual;
     char buffer[256];
     char bufferULTIMAS[5][256];
@@ -147,7 +144,6 @@ void ListarRegistros() {
             }
 
             // Imprimir as últimas linhas armazenadas no buffer circular
-            int i;
             for (i = 0; i < 5 && i < totalLinhas; i++) {
                 printf("%s", bufferULTIMAS[index]);
                 index = (index + 1) % 5;
@@ -173,32 +169,40 @@ void ListarRegistros() {
 }
 
 
-void BuscarRegistro(){
-    FILE *arquivo = fopen("dados.txt", "r");
+void BuscarRegistro() {
+    FILE *arquivo = fopen("Caso.txt", "r");
+    if (arquivo == NULL) {
+        printf("\nNão foi possível abrir o arquivo para busca.\n");
+        return;
+    }
+
     int encontrado = 0;
-    int numRegistro;
-    int numlido;
     int linhas = ContarLinhasNoArquivo();
-    printf("Insira o numero do caso : ");
-    scanf("%d",&numRegistro);
-    while(fscanf(arquivo, "%d - ", &numlido) == 1){
-        printf("PROCURANDO\n");
-        if(numRegistro == numlido){
-            printf("ACHADO\n");
+    int numRegistro;
+    int contador = IncrementarContador();
+
+    printf("Insira o numero do caso: ");
+    scanf("%d", &numRegistro);
+
+    for (int i = 0; i < linhas; i++) {
+        if (numRegistro == c[i].contador) {
+            printf("Caso encontrado\n");
             printf(PERSON_FORMAT_OUT, c[i].contador, c[i].nome, c[i].idade, c[i].avaliacao, c[i].genero);
             encontrado++;
+            break; 
         }
     }
-    
-    if(!encontrado){
-        ("Nenhum caso encontrado com esse registro.");
+
+    if (!encontrado) {
+        printf("Nenhum registro encontrado com esse numero.\n");
     }
 
     fclose(arquivo);
 }
 
+
 void AtualizarRegistro() {
-    FILE *arquivo = fopen("dados.txt", "r+");
+    FILE *arquivo = fopen("Caso.txt", "r+");
     if (arquivo == NULL) {
         printf("\nNao foi possivel abrir o arquivo para atualizacao.\n");
         return;
@@ -208,9 +212,9 @@ void AtualizarRegistro() {
     printf("Insira o numero do caso a ser atualizado : ");
     scanf("%d", &numRegistro);
 
-    for (int i = 0; fscanf(arquivo, PERSON_FORMAT_OUT, &c[i].contador, c[i].nome, &c[i].idade, &c[i].avaliacao, &c[i].genero) == 5; i++) {
+    for (i; fscanf(arquivo, PERSON_FORMAT_OUT, &c[i].contador, c[i].nome, &c[i].idade, &c[i].avaliacao, &c[i].genero) == 5; i++) {
         if (c[i].contador == numRegistro) {
-            printf("Caso encontrado. Insira os novos dados:\n");
+            printf("Caso encontrado. Insira os novos Caso:\n");
 
             printf("Nome : ");
             fgets(c[i].nome, 50, stdin);
@@ -228,7 +232,7 @@ void AtualizarRegistro() {
             printf("Qual genero ? ");
             scanf(" %c", &c[i].genero);
 
-            fseek(arquivo, i * sizeof(struct caso), SEEK_SET);
+            fseek(arquivo, i*sizeof(struct caso), SEEK_SET);
 
             fprintf(arquivo, PERSON_FORMAT_OUT, c[i].contador, c[i].nome, c[i].idade, c[i].avaliacao, c[i].genero);
 
@@ -245,13 +249,13 @@ void AtualizarRegistro() {
 }
 
 void RemoverRegistro() {
-    FILE *arquivo = fopen("dados.txt", "r+");
+    FILE *arquivo = fopen("Caso.txt", "r+");
     if (arquivo == NULL) {
         printf("\nNao foi possivel abrir o arquivo para remocao.\n");
         return;
     }
 
-    int numRegistro, encontrado = 0;
+    int numRegistro;
     printf("Insira o numero do caso a ser removido : ");
     scanf("%d", &numRegistro);
 
@@ -266,6 +270,6 @@ void RemoverRegistro() {
     fclose(arquivo);
     fclose(temp);
 
-    remove("dados.txt");
-    rename("temp.txt", "dados.txt");
+    remove("Caso.txt");
+    rename("temp.txt", "Caso.txt");
 }
