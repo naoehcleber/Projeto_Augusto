@@ -175,21 +175,21 @@ void ListarRegistros() {
 
 void BuscarRegistro(){
     FILE *arquivo = fopen("dados.txt", "r");
-    int numRegistro, encontrado = 0;
-    int busca;
-
-    printf("Insira o numero de registro a ser buscado : ");
-    scanf("%d", &numRegistro);
-
-    while(fscanf(arquivo,"%d", busca) != EOF){
-        printf("Procurando\n");
-        if(busca == numRegistro){
-            encontrado = 1;
+    int encontrado = 0;
+    int numRegistro;
+    int numlido;
+    int linhas = ContarLinhasNoArquivo();
+    printf("Insira o numero do caso : ");
+    scanf("%d",&numRegistro);
+    while(fscanf(arquivo, "%d - ", &numlido) == 1){
+        printf("PROCURANDO\n");
+        if(numRegistro == numlido){
+            printf("ACHADO\n");
             printf(PERSON_FORMAT_OUT, c[i].contador, c[i].nome, c[i].idade, c[i].avaliacao, c[i].genero);
-            break;
+            encontrado++;
         }
-        //i++;
     }
+    
     if(!encontrado){
         ("Nenhum caso encontrado com esse registro.");
     }
