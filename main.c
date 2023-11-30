@@ -12,7 +12,6 @@ void main(){
     while(1){
         int escolha;
 
-
         //menu
         ImprimirMenu();
         scanf("%d", &escolha);
@@ -31,7 +30,6 @@ void main(){
             break;
         case 4:
             AtualizarRegistro();
-            //AtualizarRegistro();
             break;
         case 5:
             //RemoverRegistro();
@@ -44,6 +42,5 @@ void main(){
 
     //fechar arquivo
     fclose(arquivo);
-
 
 }
