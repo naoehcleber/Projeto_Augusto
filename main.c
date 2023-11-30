@@ -27,9 +27,10 @@ void main(){
             ListarRegistros();
             break;
         case 3:
-            //BuscarRegistro();
+            BuscarRegistro();
             break;
         case 4:
+            AtualizarRegistro();
             //AtualizarRegistro();
             break;
         case 5:

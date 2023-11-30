@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include "structs.h"
 //define o formato em que os dados vao ser escritos 
 const char* PERSON_FORMAT_OUT = "(%s, %d, %d, %c)\n";
@@ -58,19 +59,15 @@ void NovoRegistro(){
 
             break;
         case 2 :
-                fseek(arquivo, 0, SEEK_END);
-                //imprimir no arquivo ja formatado 
-                fprintf(arquivo, PERSON_FORMAT_OUT, c.nome, c.idade, c.avaliacao, c.genero);
+            fseek(arquivo, 0, SEEK_END);
+            //imprimir no arquivo ja formatado 
+            fprintf(arquivo, PERSON_FORMAT_OUT, c.nome, c.idade, c.avaliacao, c.genero);
 
             break;
     }
     fclose(arquivo);
 
 }
-
-
-
-
 
 
 int ContarLinhasNoArquivo(){
@@ -95,7 +92,8 @@ void AdicionarContador(){
     int linhas = ContarLinhasNoArquivo();
     char buffer[linhas];
     while(fgets(buffer,sizeof(buffer),arquivo) != NULL){
-        fprintf(arquivoTEMP, "%d - %s\n", current_line, buffer);
+        fprintf(arquivoTEMP, "%d - (%s)", current_line, buffer);
+        c.contador = current_line;
         current_line++;
     }
     fclose(arquivoTEMP);
@@ -159,3 +157,33 @@ void ListarRegistros() {
 }
 
 
+void BuscarRegistro(){
+    FILE *arquivo = fopen("dados.txt", "r");
+    int i, numRegistro, encontrado = 0;
+
+    printf("Insira o numero de registro a ser buscado : ");
+    scanf("%d", &numRegistro);
+
+    while(fread(&c, sizeof(c), 1, arquivo) == 1){
+        if(c.contador == numRegistro){
+            encontrado = 1;
+            printf("(%s, %d, %d, %c, %d)\n", c.nome, c.idade, c.avaliacao, c.genero, c.contador);
+            break;
+        }
+    }
+    if(!encontrado){
+        ("Nenhum caso encontrado com esse registro.");
+    }
+
+    fclose(arquivo);
+}
+
+void AtualizarRegistro(){
+    FILE *arquivo = fopen("dados.txt", "w");
+    int i, numRegistro, encontrado = 0;
+
+    printf("Insira o numero de registro a ser atualizado : ");
+    scanf("%d", &numRegistro);
+    
+    
+}

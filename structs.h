@@ -13,4 +13,4 @@ struct caso
     
     int contador;
 
-} c;
+} c[50];
