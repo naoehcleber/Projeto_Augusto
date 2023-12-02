@@ -9,8 +9,8 @@ int main()
     while (1)
     {
         int escolha;
-
         ImprimirMenu();
+        lerArquivo();
         scanf("%d", &escolha);
         while (getchar() != '\n');
 
