@@ -40,11 +40,9 @@ int ContarLinhasNoArquivo(const char *file)
     return linhas;
 }
 
-
-
-int IncrementarContador()
+int IncrementarContador(const char* file_name)
 {
-    int linhas = ContarLinhasNoArquivo("dados.txt");
+    int linhas = ContarLinhasNoArquivo(file_name);
     int contador = linhas + 1;
     return contador;
 }
@@ -101,41 +99,40 @@ void NovoRegistro()
     case 1:
         fseek(arquivo, 0, SEEK_SET);
 
-        //arquivo = fopen("dados.txt", "w+");
-
-        //c[j].contador = IncrementarContador();
         c[j].contador = 1;
         fprintf(temp, PERSON_FORMAT_OUT, c[j].contador, c[j].nome, c[j].idade, c[j].avaliacao, c[j].genero);
 
-        //loop pra aumentar em 1 todos os contadores do arquivo original
-        
-        while(p != EOF)
+        // loop para aumentar em 1 todos os contadores do arquivo original
+        for (int k = 0; k < linhas; k++)
         {
-            //fscanf(arquivo, PERSON_FORMAT_OUT, &c[k].contador, c[k].nome, &c[k].idade, &c[k].avaliacao, &c[k].genero);
-            //fprintf(temp, PERSON_FORMAT_OUT, c[k].contador, c[k].nome, c[k].idade, c[k].avaliacao, c[k].genero);
-            fputc(p,temp);
-            p = fgetc(arquivo);
+            c[k].contador = k + 2;
+            fprintf(temp, PERSON_FORMAT_OUT, c[k].contador, c[k].nome, c[k].idade, c[k].avaliacao, c[k].genero);
         }
 
-        fclose(arquivo);
+        fclose(temp);  // Fecha o arquivo temporário após a escrita
+
+        temp = fopen("temp.txt", "r");  // Reabre o arquivo temporário para leitura
+
+        // Copia o conteúdo do arquivo temporário para o arquivo original
+        while ((p = fgetc(temp)) != EOF)
+        {
+            fputc(p, arquivo);
+        }
+
         fclose(temp);
-
-        remove("dados.txt");
-        rename("temp.txt", "dados.txt");
-
         break;
 
     case 2:
         fseek(arquivo, 0, SEEK_END);
 
-        c[j].contador = IncrementarContador();
+        c[j].contador = IncrementarContador("dados.txt");
         fprintf(arquivo, PERSON_FORMAT_OUT, c[j].contador, c[j].nome, c[j].idade, c[j].avaliacao, c[j].genero);
         break;
     }
-    
-    fclose(arquivo);
 
+    fclose(arquivo);
 }
+
 
 void ListarRegistros()
 {
@@ -201,9 +198,9 @@ void ListarRegistros()
 void BuscarRegistro()
 {
     FILE* arquivo = fopen("dados.txt", "r+");
-   int linhas = ContarLinhasNoArquivo("dados.txt");
-   lerArquivo();
-    
+    int linhas = ContarLinhasNoArquivo("dados.txt");
+    lerArquivo();
+
 
     if (arquivo == NULL)
     {
@@ -212,7 +209,7 @@ void BuscarRegistro()
     }
 
     int encontrado = 0;
-    
+
     int numRegistro;
 
     printf("Insira o numero do caso: ");
@@ -235,7 +232,7 @@ void BuscarRegistro()
     }
 
     fclose(arquivo);
-}
+    }
 
 void AtualizarRegistro()
 {
@@ -250,6 +247,7 @@ void AtualizarRegistro()
     int numRegistro, encontrado = 0;
     printf("Insira o numero do caso a ser atualizado: ");
     scanf("%d", &numRegistro);
+    while (getchar() != '\n');
 
     for (int i = 0; i < linhas; i++)
     {
@@ -260,7 +258,7 @@ void AtualizarRegistro()
             printf("Nome: ");
             fgets(c[i].nome, 50, stdin);
             c[i].nome[strcspn(c[i].nome, "\n")] = '\0';
-            while (getchar() != '\n');
+            
 
             printf("Idade: ");
             scanf("%d", &c[i].idade);
@@ -273,8 +271,10 @@ void AtualizarRegistro()
             while (getchar() != '\n');
 
             printf("Genero: ");
-            scanf(" %c", &c[i].genero);
+            scanf("%c", &c[i].genero);
 
+            //achar a posicao do caso
+            
             fprintf(arquivo, PERSON_FORMAT_OUT, c[i].contador, c[i].nome, c[i].idade, c[i].avaliacao, c[i].genero);
 
             encontrado = 1;
