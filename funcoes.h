@@ -69,7 +69,6 @@ void NovoRegistro()
 
     int linhas = ContarLinhasNoArquivo("dados.txt");
     int j = linhas;
-    int linhasTemp = ContarLinhasNoArquivo("temp.txt");
     char p;
 
     printf("Caso %d\n", j + 1);
@@ -249,6 +248,8 @@ void AtualizarRegistro()
     scanf("%d", &numRegistro);
     while (getchar() != '\n');
 
+    FILE* temp = fopen("temp.txt", "w");
+
     for (int i = 0; i < linhas; i++)
     {
         if (numRegistro == c[i].contador)
@@ -258,36 +259,66 @@ void AtualizarRegistro()
             printf("Nome: ");
             fgets(c[i].nome, 50, stdin);
             c[i].nome[strcspn(c[i].nome, "\n")] = '\0';
-            
 
             printf("Idade: ");
             scanf("%d", &c[i].idade);
             while (getchar() != '\n');
 
-
             printf("Digite uma nota de 0 a 10 para Joao: ");
             scanf("%d", &c[i].avaliacao);
-
             while (getchar() != '\n');
 
             printf("Genero: ");
-            scanf("%c", &c[i].genero);
+            scanf(" %c", &c[i].genero);
 
-            //achar a posicao do caso
-            
-            fprintf(arquivo, PERSON_FORMAT_OUT, c[i].contador, c[i].nome, c[i].idade, c[i].avaliacao, c[i].genero);
+            fprintf(temp, PERSON_FORMAT_OUT, c[i].contador, c[i].nome, c[i].idade, c[i].avaliacao, c[i].genero);
 
             encontrado = 1;
-            break;
+        }
+        else
+        {
+            fprintf(temp, PERSON_FORMAT_OUT, c[i].contador, c[i].nome, c[i].idade, c[i].avaliacao, c[i].genero);
         }
     }
 
-    if (!encontrado)
+    fclose(arquivo);
+    fclose(temp);
+
+    arquivo = fopen("dados.txt", "w"); 
+
+    if (arquivo == NULL)
     {
-        printf("\nNenhum caso encontrado com esse numero.\n");
+        printf("\nErro ao reabrir o arquivo original.\n");
+        fclose(temp);
+        return;
+    }
+
+    temp = fopen("temp.txt", "r"); 
+
+    if (temp == NULL)
+    {
+        printf("\nErro ao abrir o arquivo temporario.\n");
+        fclose(arquivo);
+        return;
+    }
+
+    char ch;
+    while ((ch = fgetc(temp)) != EOF)
+    {
+        fputc(ch, arquivo);
     }
 
     fclose(arquivo);
+    fclose(temp);
+
+    if (encontrado)
+    {
+        printf("Caso %d atualizado com sucesso.\n", numRegistro);
+    }
+    else
+    {
+        printf("\nNenhum caso encontrado com esse numero.\n");
+    }
 }
 
 void RemoverRegistro()
