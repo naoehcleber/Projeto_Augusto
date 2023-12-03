@@ -2,10 +2,29 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include "structs.h"
+
 
 const char* PERSON_FORMAT_OUT = "%d - (%s, %d, %d, %c)\n";
 const char* PERSON_FORMAT_IN = "%d - (%[^,], %d, %d, %c)\n";
+
+struct caso
+{
+    char nome[50];
+    int idade;
+    int avaliacao;
+    char genero;
+    int contador;
+} c[50];
+
+struct casoTEMP
+{
+   char nome[50];
+    int idade;
+    int avaliacao;
+    char genero;
+    int contador;
+} cT[50];
+
 
 void ImprimirMenu()
 {
@@ -382,4 +401,43 @@ void RemoverRegistro()
     {
         printf("\nNenhum caso encontrado com esse numero.\n");
     }
+}
+
+int main()
+{
+    FILE* arquivo = fopen("dados.txt", "r+");
+
+    while (1)
+    {
+        int escolha;
+        ImprimirMenu();
+        lerArquivo();
+        scanf("%d", &escolha);
+        while (getchar() != '\n');
+
+        switch (escolha)
+        {
+        case 1:
+            NovoRegistro();
+            break;
+        case 2:
+            ListarRegistros();
+            break;
+        case 3:
+            BuscarRegistro();
+            break;
+        case 4:
+            AtualizarRegistro();
+            break;
+        case 5:
+            RemoverRegistro();
+            break;
+        case 0:
+            exit(0);
+            break;
+        }
+    }
+
+    fclose(arquivo);
+    return 0;
 }
