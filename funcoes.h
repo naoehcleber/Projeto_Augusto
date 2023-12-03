@@ -335,7 +335,16 @@ void RemoverRegistro()
     printf("Insira o numero do caso a ser removido: ");
     scanf("%d", &numRegistro);
 
-    FILE* temp = fopen("temp.txt", "w");
+    FILE* temp = tmpfile();  // Cria um arquivo temporário
+
+    if (temp == NULL)
+    {
+        printf("\nErro ao criar o arquivo temporario.\n");
+        fclose(arquivo);
+        return;
+    }
+
+    int encontrado = 0;
 
     for (int i = 0; i < linhas; i++)
     {
@@ -343,14 +352,40 @@ void RemoverRegistro()
         {
             fprintf(temp, PERSON_FORMAT_OUT, c[i].contador, c[i].nome, c[i].idade, c[i].avaliacao, c[i].genero);
         }
-        i++;
+        else
+        {
+            encontrado = 1;
+        }
+    }
+
+    fclose(arquivo);
+    fseek(temp, 0, SEEK_SET);  // Volta para o início do arquivo temporário
+
+    arquivo = fopen("dados.txt", "w");  // Reabre o arquivo original para escrita
+
+    if (arquivo == NULL)
+    {
+        printf("\nErro ao reabrir o arquivo original.\n");
+        fclose(temp);
+        return;
+    }
+
+    // Copia o conteúdo do arquivo temporário para o arquivo original
+    char ch;
+    while ((ch = fgetc(temp)) != EOF)
+    {
+        fputc(ch, arquivo);
     }
 
     fclose(arquivo);
     fclose(temp);
 
-    remove("dados.txt");
-    rename("temp.txt", "dados.txt");
-
-    printf("Caso %d removido com sucesso.\n", numRegistro);
+    if (encontrado)
+    {
+        printf("Caso %d removido com sucesso.\n", numRegistro);
+    }
+    else
+    {
+        printf("\nNenhum caso encontrado com esse numero.\n");
+    }
 }
